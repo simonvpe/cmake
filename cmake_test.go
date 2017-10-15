@@ -19,18 +19,18 @@ func genTemporaryFile(t *testing.T) string {
 }
 
 func TestGenerateMain(t *testing.T) {
-	proj := "test-project"
-	mver := "3.8"
 	file := genTemporaryFile(t);
 	defer os.Remove(file)
-	
-	ctx, err := GenerateMain(file, proj, mver)
-	if err != nil {
-		t.Errorf("Error %q", err)
+
+	ctx := CMakeContext {
+		ProjectName:    "test-project",
+		MinimumVersion: "3.8",
+		TestSuite:      "catch",
 	}
 	
-	if ctx == nil {
-		t.Errorf("Context was nil")
+	err := Generate(file, "CMakeLists.tmpl", &ctx)
+	if err != nil {
+		t.Errorf("Error %q", err)
 	}
 	
 	{
