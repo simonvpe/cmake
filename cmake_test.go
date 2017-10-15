@@ -26,6 +26,7 @@ func TestGenerateMain(t *testing.T) {
 		ProjectName:    "test-project",
 		MinimumVersion: "3.8",
 		TestSuite:      "catch",
+		Language:       "cpp",
 	}
 	
 	err := Generate(file, "CMakeLists.tmpl", &ctx)
@@ -42,3 +43,25 @@ func TestGenerateMain(t *testing.T) {
 	}
 }
 
+func TestGenerateCatchTests(t *testing.T) {
+	file := genTemporaryFile(t);
+	defer os.Remove(file)
+
+	ctx := CMakeContext {
+		TestSuite:      "catch",
+		Language:       "cpp",
+	}
+	
+	err := Generate(file, "test/CMakeLists.tmpl", &ctx)
+	if err != nil {
+		t.Errorf("Error %q", err)
+	}
+	
+	{
+		bytes, err := ioutil.ReadFile(file)
+		if err != nil {
+			t.Error("Failed to read bytes")
+		}
+		fmt.Println(string(bytes))
+	}
+}
