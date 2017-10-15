@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"testing"
 	"os"
+	"fmt"
 )
 
 func genTemporaryFile(t *testing.T) string {
@@ -17,24 +18,27 @@ func genTemporaryFile(t *testing.T) string {
 	return f.Name()
 }
 
-func TestGenerate(t *testing.T) {
+func TestGenerateMain(t *testing.T) {
 	proj := "test-project"
 	mver := "3.8"
 	file := genTemporaryFile(t);
 	defer os.Remove(file)
 	
-	ctx, err := Generate(file, proj, mver)
+	ctx, err := GenerateMain(file, proj, mver)
 	if err != nil {
-		t.Error("Error %q", err)
+		t.Errorf("Error %q", err)
 	}
+	
 	if ctx == nil {
-		t.Error("Context was nil")
+		t.Errorf("Context was nil")
 	}
-	if ctx.ProjectName != proj {
-		t.Error("Bad ProjectName")
+	
+	{
+		bytes, err := ioutil.ReadFile(file)
+		if err != nil {
+			t.Error("Failed to read bytes")
+		}
+		fmt.Println(string(bytes))
 	}
-	if ctx.MinimumVersion != mver {
-		t.Error("Bad MinimumVersion")
-	}	
 }
 
